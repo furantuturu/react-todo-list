@@ -1,0 +1,128 @@
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+html, body {
+    height: 100%;
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #111;
+    color: #ddd;
+}
+
+#root {
+    height: 100%;
+}
+
+.container {
+    max-width: 550px;
+    min-width: 400px;
+    height: 100%;
+    margin: auto;
+    padding: 1rem;
+    background-color: #222;
+}
+
+    .container h1 {
+        text-align: center;
+        color: lightgreen;
+    }
+
+    .container form {
+        margin-top: 1.5rem;
+    }
+
+        .container form .form-group {
+            padding: 1rem 1.5rem 0.5rem;
+            text-align: center;
+        }
+
+            .container form .form-group input,
+            .container form .form-group button {
+                padding: .6rem;
+                font-size: 1.05rem;
+            }
+
+            .container form .form-group input {
+                border-top-left-radius: 0.8rem;
+                border-bottom-left-radius: 0.8rem;
+            }
+
+            .container form .form-group button {
+                border-top-right-radius: 0.8rem;
+                border-bottom-right-radius: 0.8rem;
+                margin: -1px;
+                font-weight: bold;
+                cursor: pointer;
+                color: #111;
+            }
+            
+            .container form .form-group .search-input,
+            .container form .form-group .search-btn {
+                border: 1px solid lightgreen;
+            }
+
+            .container form .form-group .add-input,
+            .container form .form-group .add-btn {
+                border: 1px solid lightskyblue;
+            }
+
+            .container form .form-group .search-btn {
+                background-color: lightgreen;
+            }
+
+            .container form .form-group .add-btn {
+                background-color: lightskyblue;
+            }
+
+            .container form .form-group .search-input:focus {
+                outline: 2px solid lightgreen;
+            }
+
+            .container form .form-group .add-input:focus {
+                outline: 2px solid lightskyblue;
+            }
+
+            .container form .form-group .search-btn:hover,
+            .container form .form-group .search-btn:focus-visible {
+                background-color: rgb(168, 237, 168);
+            }
+
+            .container form .form-group .add-btn:hover,
+            .container form .form-group .add-btn:focus-visible {
+                background-color: rgb(173, 217, 245);
+            }
+        
+        .container form .todo-list-container {
+            margin-top: 1.5rem;
+            padding: 1rem 1.5rem;
+            background-color: #333;
+            border-radius: .85rem;
+        }
+
+            .container form .todo-list-container h3 {
+                color: lightskyblue;
+            }
+
+            .container form .todo-list-container ul {
+                margin-top: 1.5rem;
+            }
+                
+                .container form .todo-list-container ul li {
+                    padding: .8rem;
+                }
+
+                .container form .todo-list-container ul li:has(input:checked) {
+                    color: #555;
+                    text-decoration: line-through;
+                }
+
+                .container form .todo-list-container ul li button{
+                    padding: .5rem;
+                }
