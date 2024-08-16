@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 function Search(){
-
   return(
     <>
       <input className="search-input" type="text" id="search-todo" placeholder="Search a ToDo activity" />
@@ -11,20 +10,66 @@ function Search(){
 
 }
 
-function Add() {
+function Add({ todoName, setTodoName, onAddTodo }) {
   return(
     <>
-      <input className="add-input" type="text" id="add-todo" placeholder="Add a ToDo activity" />
-      <button className="add-btn">Add</button>
+      <input onChange={ (evt) => setTodoName(evt.target.value) } value={ todoName } className="add-input" type="text" id="add-todo" placeholder="Add a ToDo activity" />
+      <button onClick={ () => onAddTodo(todoName) } className="add-btn">Add</button>
     </>
   )
 }
 
+function ListItem({ todo, onToggleTodo, onDeleteTodo }) {
+  return (
+    <li>
+        <label>
+          <input type="checkbox" checked={ todo.checked } onChange={ (evt) => onToggleTodo(todo.id, evt.target.checked) } />
+          { todo.todoName }
+        </label>
+        <button className="edit-btn">Edit</button>
+        <button onClick={ () => onDeleteTodo(todo.id) } className="delete-btn">Delete</button>
+    </li>
+  )
+}
+
 export default function App() {
+  const [todos, setTodos] = useState([])
+  const [todoName, setTodoName] = useState("")
 
   function handleForm(evt){
     evt.preventDefault()
     evt.stopPropagation()
+  }
+
+  function handleAddTodo(todoName) {
+    if (todoName == '') return
+
+    setTodos(currentTodo => {
+      return [
+        ...currentTodo,
+        { id:  Math.trunc(Math.random() * 100), todoName, checked: false }
+      ]
+    })
+  }
+
+  function handleToggleTodo(id, checked) {
+    setTodos(currentTodo => {
+      return currentTodo.map(todo => {
+        if (todo.id == id) {
+          return {
+            ...todo, checked
+          }
+        }
+
+        return todo
+      })
+    })
+  }
+
+  function handleDeleteTodo(id) {
+    setTodos(currentTodo => {
+      return currentTodo.filter(todo => todo.id != id)
+    })
   }
 
   return (
@@ -36,23 +81,15 @@ export default function App() {
             <Search />
           </div>
           <div className="form-group">
-            <Add />
+            <Add todoName={ todoName } setTodoName={ setTodoName } onAddTodo={ handleAddTodo }  />
           </div>
           <div className="todo-list-container">
             <h3>List of ToDo Activities</h3>
             <ul className="todo-list">
-              <li>
-                <input type="checkbox" id="todo-item1" />
-                <label for="todo-item1">ToDo 1</label>
-                <button>Edit</button>
-                <button>Delete</button>
-              </li>
-              <li>
-                <input type="checkbox" id="todo-item2" />
-                <label for="todo-item2">ToDo 2</label>
-                <button>Edit</button>
-                <button>Delete</button>
-              </li>
+              { todos.length == 0 && "No ToDos" }
+              { todos.map(todo => {
+                return <ListItem key={ todo.id } todo={ todo } onToggleTodo={ handleToggleTodo } onDeleteTodo={ handleDeleteTodo } />
+              }) }
             </ul>
           </div>
         </form>
