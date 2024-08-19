@@ -1,48 +1,21 @@
 import { useState } from 'react'
-
-function Search(){
-  return(
-    <>
-      <input className="search-input" type="text" id="search-todo" placeholder="Search a ToDo activity" />
-      <button className="search-btn">Search</button>
-    </>
-  )
-
-}
-
-function Add({ todoName, setTodoName, onAddTodo }) {
-  return(
-    <>
-      <input onChange={ (evt) => setTodoName(evt.target.value) } value={ todoName } className="add-input" type="text" id="add-todo" placeholder="Add a ToDo activity" />
-      <button onClick={ () => onAddTodo(todoName) } className="add-btn">Add</button>
-    </>
-  )
-}
-
-function ListItem({ todo, onToggleTodo, onDeleteTodo }) {
-  return (
-    <li>
-        <label>
-          <input type="checkbox" checked={ todo.checked } onChange={ (evt) => onToggleTodo(todo.id, evt.target.checked) } />
-          { todo.todoName }
-        </label>
-        <button className="edit-btn">Edit</button>
-        <button onClick={ () => onDeleteTodo(todo.id) } className="delete-btn">Delete</button>
-    </li>
-  )
-}
+import Add from './Add'
+import Search from'./Search'
+import ListItem from './ListItem'
 
 export default function App() {
   const [todos, setTodos] = useState([])
   const [todoName, setTodoName] = useState("")
+  const [searchTodoName, setSearchTodoName] = useState("")
+  const [filteredTodo, setFilteredTodo] = useState([])
 
   function handleForm(evt){
     evt.preventDefault()
-    evt.stopPropagation()
+    evt.stopPropagation()    
   }
 
   function handleAddTodo(todoName) {
-    if (todoName == '') return
+    if (todoName == "") return
 
     setTodos(currentTodo => {
       return [
@@ -50,6 +23,8 @@ export default function App() {
         { id:  Math.trunc(Math.random() * 100), todoName, checked: false }
       ]
     })
+
+    setTodoName("")
   }
 
   function handleToggleTodo(id, checked) {
@@ -72,23 +47,52 @@ export default function App() {
     })
   }
 
+  function handleEditTodo() {
+
+  }
+
+  function handleSearchTodo(searchTodoName) {
+    if (todos.length <= 0) return
+
+    const copyTodos = todos.slice(0)
+    const searchedTodo = copyTodos.filter(copyTodo => copyTodo.todoName == searchTodoName)
+
+    console.log(searchedTodo)
+
+    setFilteredTodo(currentFilteredTodos => {
+      return [
+        ...searchedTodo
+      ]
+    })
+  }
+
   return (
     <>
       <div className="container">
         <h1>ToDo App</h1>
         <form onSubmit={ (evt) => handleForm(evt) }>
           <div className="form-group">
-            <Search />
+            <Search 
+              searchTodoName={ searchTodoName } 
+              setSearchTodoName={ setSearchTodoName }
+              onSearchTodo={ handleSearchTodo } />
           </div>
           <div className="form-group">
-            <Add todoName={ todoName } setTodoName={ setTodoName } onAddTodo={ handleAddTodo }  />
+            <Add 
+              todoName={ todoName } 
+              setTodoName={ setTodoName } 
+              onAddTodo={ handleAddTodo }  />
           </div>
           <div className="todo-list-container">
             <h3>List of ToDo Activities</h3>
             <ul className="todo-list">
               { todos.length == 0 && "No ToDos" }
               { todos.map(todo => {
-                return <ListItem key={ todo.id } todo={ todo } onToggleTodo={ handleToggleTodo } onDeleteTodo={ handleDeleteTodo } />
+                return <ListItem 
+                          key={ todo.id } 
+                          todo={ todo } 
+                          onToggleTodo={ handleToggleTodo } 
+                          onDeleteTodo={ handleDeleteTodo } />
               }) }
             </ul>
           </div>
