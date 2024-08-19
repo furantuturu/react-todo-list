@@ -159,6 +159,7 @@ body {
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
+  cursor: pointer;
 }
 
 .container form .todo-list-container li label input {
