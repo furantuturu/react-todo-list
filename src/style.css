@@ -24,8 +24,8 @@ body {
 }
 
 .container {
-  max-width: 550px;
-  min-width: 400px;
+  max-width: 575px;
+  min-width: 450px;
   height: 100%;
   margin: auto;
   padding: 1rem;
@@ -66,12 +66,12 @@ body {
   color: #111;
 }
 
-.container form .form-group .search-input,
+.container form .form-group #search-todo,
 .container form .form-group .search-btn {
   border: 1px solid lightgreen;
 }
 
-.container form .form-group .add-input,
+.container form .form-group #add-todo,
 .container form .form-group .add-btn {
   border: 1px solid lightskyblue;
 }
@@ -84,11 +84,11 @@ body {
   background-color: lightskyblue;
 }
 
-.container form .form-group .search-input:focus {
+.container form .form-group #search-todo:focus {
   outline: 2px solid lightgreen;
 }
 
-.container form .form-group .add-input:focus {
+.container form .form-group #add-todo:focus {
   outline: 2px solid lightskyblue;
 }
 
@@ -201,4 +201,39 @@ body {
 
 .container form .todo-list-container li label:hover:has(input:checked)::before {
   background-color: rgb(168, 237, 168);
+}
+
+
+/* Edit form design */
+
+.container form .todo-list-container ul li #edit-todo {
+    width: 7.27rem;
+    padding: 0.4rem;
+    text-align: center;
+    border: 1px solid lightgoldenrodyellow;
+    border-radius: .25rem;
+}
+
+.container form .todo-list-container ul li #edit-todo:focus {
+    outline: 2px solid lightgoldenrodyellow;
+}
+
+.container form .todo-list-container ul li .done-btn {
+  background: rgb(149, 209, 228);
+  border: 1px solid rgb(149, 209, 228);
+}
+
+.container form .todo-list-container ul li .cancel-btn {
+  background: rgb(235, 102, 102);
+  border: 1px solid rgb(235, 102, 102);
+}
+
+.container form .todo-list-container ul li .done-btn:hover {
+  background: rgb(177, 218, 230);
+  outline: 2px solid rgb(149, 209, 228);
+}
+
+.container form .todo-list-container ul li .cancel-btn:hover {
+  background: rgb(231, 139, 139);
+  outline: 2px solid rgb(235, 102, 102);
 }
