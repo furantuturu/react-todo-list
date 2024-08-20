@@ -2,11 +2,7 @@ import { useState } from 'react'
 
 function DeleteButton({ todo, onDeleteTodo }) {
     return (
-        <button 
-            onClick={ () => onDeleteTodo(todo.id) } 
-            className="delete-btn">
-                Delete
-        </button>
+        <button onClick={ () => onDeleteTodo(todo.id) } className="delete-btn">Delete</button>
 
     )
 }
@@ -16,20 +12,33 @@ function EditButton({ toggleEditTodoForm  }) {
 }
 
 
-function EditTodoForm({ toggleEditButton }) {
+function EditTodoForm({ todo, newTodoName, setNewTodoName, toggleEditDoneButton, toggleEditCancelButton }) {
     return (
-        <div>
-            <input type="text" id="edit-input" placeholder="Edit ToDo name" />
-            <button onClick={ toggleEditButton } className="done-btn">Done</button>
-            <button onClick={ toggleEditButton } className="cancel-btn">Cancel</button>
-        </div>
+        <>
+            <input 
+                onChange={ (evt) => setNewTodoName(evt.target.value) } 
+                value={ newTodoName } 
+                type="text" 
+                id="edit-todo" 
+                placeholder="Edit ToDo name" 
+                />
+
+            <button onClick={ () => toggleEditDoneButton(todo, newTodoName) } className="done-btn">Done</button>
+            <button onClick={ () => toggleEditCancelButton() } className="cancel-btn">Cancel</button>
+        </>
     )
 }
 
-function EditToggle({ onEdit, toggleEditButton, toggleEditTodoForm }) {
+function EditToggle({ onEdit, toggleEditTodoForm, todo, newTodoName, setNewTodoName, toggleEditDoneButton, toggleEditCancelButton }) {
     
     if (onEdit) {
-        return <EditTodoForm toggleEditButton={ toggleEditButton } />
+        return <EditTodoForm 
+                    todo={ todo }
+                    newTodoName={ newTodoName }
+                    setNewTodoName={ setNewTodoName }
+                    toggleEditDoneButton={ toggleEditDoneButton } 
+                    toggleEditCancelButton={ toggleEditCancelButton } 
+                    />
     }
 
     return <EditButton toggleEditTodoForm={ toggleEditTodoForm } />
@@ -38,13 +47,25 @@ function EditToggle({ onEdit, toggleEditButton, toggleEditTodoForm }) {
 
 export default function ListItem({ todo, onToggleTodo, onDeleteTodo }) {
     const [onEdit, setOnEdit] = useState(false)
+    const [newTodoName, setNewTodoName] = useState("")
 
-    function handleEditButton() {
+    
+    function handleEditTodoForm() {
+        setOnEdit(true)
+    }
+
+    function handleEditDoneButton(todo, newTodoName) {
+        if (newTodoName == "") return
+
+        todo.todoName = newTodoName
+
+        setNewTodoName("")
         setOnEdit(false)
     }
 
-    function handleEditTodoForm() {
-        setOnEdit(true)
+    function handleEditCancelButton() {
+        setNewTodoName("")
+        setOnEdit(false)
     }
 
     return (
@@ -53,16 +74,26 @@ export default function ListItem({ todo, onToggleTodo, onDeleteTodo }) {
                 <input 
                     type="checkbox" 
                     checked={ todo.checked } 
-                    onChange={ (evt) => onToggleTodo(todo.id, evt.target.checked) } />
+                    onChange={ (evt) => onToggleTodo(todo.id, evt.target.checked) } 
+                    />
 
                 { todo.todoName }
             </label>
 
             <EditToggle 
                 onEdit={ onEdit } 
-                toggleEditButton={ handleEditButton } 
-                toggleEditTodoForm={ handleEditTodoForm } />
-            <DeleteButton todo={ todo } onDeleteTodo={ onDeleteTodo } />
+                toggleEditTodoForm={ handleEditTodoForm }
+                todo={ todo }
+                newTodoName={ newTodoName }
+                setNewTodoName={ setNewTodoName }
+                toggleEditDoneButton={ handleEditDoneButton } 
+                toggleEditCancelButton={ handleEditCancelButton } 
+                />
+
+            <DeleteButton 
+                todo={ todo } 
+                onDeleteTodo={ onDeleteTodo } 
+                />
         </li>
     )
 }
