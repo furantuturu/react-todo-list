@@ -1,17 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Add from './Add'
 import Search from './Search'
 import ListItem from './ListItem'
 
-function TodoLists({ todos, filteredTodos, onToggleTodo, onDeleteTodo }) {
+function TodoLists({ todos, filteredTodos, setTodos, setFilteredTodos, onDeleteTodo }) {
   if (filteredTodos.length > 0) {
     return filteredTodos.map(filteredTodo => {
       return (
         <ListItem 
           key={ filteredTodo.id } 
           todo={ filteredTodo } 
-          onToggleTodo={ onToggleTodo } 
-          onDeleteTodo={ onDeleteTodo } 
+          setTodos={ setFilteredTodos }
+          onDeleteTodo={ onDeleteTodo }
         />
       )
     })
@@ -22,16 +22,47 @@ function TodoLists({ todos, filteredTodos, onToggleTodo, onDeleteTodo }) {
       <ListItem 
         key={ todo.id } 
         todo={ todo } 
-        onToggleTodo={ onToggleTodo } 
-        onDeleteTodo={ onDeleteTodo } 
+        setTodos={ setTodos }
+        onDeleteTodo={ onDeleteTodo }
         />
     )
   }) 
 }
 
 export default function App() {
-  const [todos, setTodos] = useState([])
+  const [todos, setTodos] = useState(() => {
+    const localTodos = localStorage.getItem("TODOS")
+    if (localTodos == null) return []
+    return JSON.parse(localTodos)
+  })
   const [filteredTodos, setFilteredTodos] = useState([])
+
+  useEffect(() => {
+    localStorage.setItem("TODOS", JSON.stringify(todos))
+  }, [todos])
+
+  useEffect(() => {
+    const uniqueTodos = todos.slice(0)
+    let filteredTodoCount = 0
+
+    todos.forEach((todo, i) => {
+      if (filteredTodoCount < filteredTodos.length) {
+        if (todo.id == filteredTodos[filteredTodoCount].id) {
+          uniqueTodos[i].checked = filteredTodos[filteredTodoCount].checked
+          uniqueTodos[i].id = filteredTodos[filteredTodoCount].id
+          uniqueTodos[i].todoName = filteredTodos[filteredTodoCount].todoName
+          filteredTodoCount++
+        } 
+      }
+    })
+
+    setTodos(currentTodo => {
+      return [
+        ...uniqueTodos
+      ]
+    })
+  }, [ filteredTodos ])
+  
 
   function handleForm(evt){
     evt.preventDefault()
@@ -39,44 +70,29 @@ export default function App() {
   }
 
   function handleAddTodo(todoName, setTodoName) {
-    if (todoName == "") return
+    if (todoName.trim() == "") return
 
     setTodos(currentTodo => {
       return [
         ...currentTodo,
-        { id:  Math.trunc(Math.random() * 100), todoName, checked: false }
+        { id:  Math.trunc(Math.random() * 100), todoName: todoName.trim(), checked: false }
       ]
     })
 
     setTodoName("")
+    setFilteredTodos([])
   }
-
-  function handleToggleTodo(id, checked) {
-    setTodos(currentTodo => {
-      return currentTodo.map(todo => {
-        if (todo.id == id) {
-          return {
-            ...todo, checked
-          }
-        }
-
-        return todo
-      })
-    })
-  }
-
-  function handleDeleteTodo(id) {
-    setTodos(currentTodo => {
-      return currentTodo.filter(todo => todo.id != id)
-    })
-  }
-
 
   function handleSearchTodo(searchTodoName) {
     if (todos.length <= 0) return
 
+    if (searchTodoName.trim() == "") {
+      setFilteredTodos([])
+      return
+    }
+
     const copyTodos = todos.slice(0)
-    const searchedTodo = copyTodos.filter(copyTodo => copyTodo.todoName.indexOf(searchTodoName) != -1)
+    const searchedTodo = copyTodos.filter(copyTodo => copyTodo.todoName.indexOf(searchTodoName.trim()) != -1)
 
     setFilteredTodos(currentFilteredTodos => {
       return [
@@ -84,6 +100,14 @@ export default function App() {
       ]
     })
   }
+
+  function handleDeleteTodo(id) {
+    if (filteredTodos.length > 0) {   
+      setFilteredTodos(currentFilteredTodo => currentFilteredTodo.filter(todo => todo.id != id))
+    }
+
+    setTodos(currentTodo => currentTodo.filter(todo => todo.id != id))
+}
 
   return (
     <>
@@ -107,7 +131,8 @@ export default function App() {
               <TodoLists 
                 todos={ todos }
                 filteredTodos={ filteredTodos }
-                onToggleTodo={ handleToggleTodo }
+                setTodos={ setTodos }
+                setFilteredTodos={ setFilteredTodos }
                 onDeleteTodo={ handleDeleteTodo }
               />
             </ul>
