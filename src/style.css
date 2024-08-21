@@ -105,7 +105,7 @@ body {
 }
 
 .container form .todo-list-container {
-  margin-top: 1.5rem;
+  margin-top: 1.8rem;
   padding: 1rem 1.5rem;
   background-color: #333;
   border-radius: 0.85rem;
@@ -116,7 +116,9 @@ body {
 }
 
 .container form .todo-list-container ul {
-  margin-top: 1.5rem;
+  margin-top: 1.7rem;
+  height: 21.875rem;
+  overflow-y: auto;
 }
 
 .container form .todo-list-container ul li {
