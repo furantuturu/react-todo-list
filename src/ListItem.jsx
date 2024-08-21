@@ -12,7 +12,7 @@ function EditButton({ toggleEditTodoForm  }) {
 }
 
 
-function EditTodoForm({ todo, newTodoName, setNewTodoName, toggleEditDoneButton, toggleEditCancelButton }) {
+function EditTodoForm({ todo, setTodos, newTodoName, setNewTodoName, toggleEditDoneButton, toggleEditCancelButton }) {
     return (
         <>
             <input 
@@ -23,17 +23,18 @@ function EditTodoForm({ todo, newTodoName, setNewTodoName, toggleEditDoneButton,
                 placeholder="Edit ToDo name" 
                 />
 
-            <button onClick={ () => toggleEditDoneButton(todo, newTodoName) } className="done-btn">Done</button>
+            <button onClick={ () => toggleEditDoneButton(todo.id, newTodoName, setTodos) } className="done-btn">Done</button>
             <button onClick={ () => toggleEditCancelButton() } className="cancel-btn">Cancel</button>
         </>
     )
 }
 
-function EditToggle({ onEdit, toggleEditTodoForm, todo, newTodoName, setNewTodoName, toggleEditDoneButton, toggleEditCancelButton }) {
+function EditToggle({ onEdit, toggleEditTodoForm, todo, setTodos, newTodoName, setNewTodoName, toggleEditDoneButton, toggleEditCancelButton }) {
     
     if (onEdit) {
         return <EditTodoForm 
                     todo={ todo }
+                    setTodos={ setTodos }
                     newTodoName={ newTodoName }
                     setNewTodoName={ setNewTodoName }
                     toggleEditDoneButton={ toggleEditDoneButton } 
@@ -45,19 +46,42 @@ function EditToggle({ onEdit, toggleEditTodoForm, todo, newTodoName, setNewTodoN
 
 }
 
-export default function ListItem({ todo, onToggleTodo, onDeleteTodo }) {
+export default function ListItem({ todo, setTodos, onDeleteTodo }) {
     const [onEdit, setOnEdit] = useState(false)
     const [newTodoName, setNewTodoName] = useState("")
 
-    
+    function handleToggleTodo(id, checked, setTodos) {
+        setTodos(currentTodo => {
+            return currentTodo.map(todo => {
+                if (todo.id == id) {
+                    return {
+                    ...todo, checked
+                    }
+                }
+
+                return todo
+            })
+        })
+    }
+
     function handleEditTodoForm() {
         setOnEdit(true)
     }
 
-    function handleEditDoneButton(todo, newTodoName) {
+    function handleEditDoneButton(id, newTodoName, setTodos) {
         if (newTodoName == "") return
 
-        todo.todoName = newTodoName
+        setTodos(currentTodo => {
+            return currentTodo.map(todo => {
+                if (todo.id == id) {
+                    return {
+                    ...todo, todoName: newTodoName
+                    }
+                }
+
+                return todo
+            })
+        })
 
         setNewTodoName("")
         setOnEdit(false)
@@ -74,7 +98,7 @@ export default function ListItem({ todo, onToggleTodo, onDeleteTodo }) {
                 <input 
                     type="checkbox" 
                     checked={ todo.checked } 
-                    onChange={ (evt) => onToggleTodo(todo.id, evt.target.checked) } 
+                    onChange={ (evt) => handleToggleTodo(todo.id, evt.target.checked, setTodos) } 
                     />
 
                 { todo.todoName }
@@ -84,6 +108,7 @@ export default function ListItem({ todo, onToggleTodo, onDeleteTodo }) {
                 onEdit={ onEdit } 
                 toggleEditTodoForm={ handleEditTodoForm }
                 todo={ todo }
+                setTodos={ setTodos }
                 newTodoName={ newTodoName }
                 setNewTodoName={ setNewTodoName }
                 toggleEditDoneButton={ handleEditDoneButton } 
