@@ -92,7 +92,9 @@ export default function App() {
     }
 
     const copyTodos = todos.slice(0)
-    const searchedTodo = copyTodos.filter(copyTodo => copyTodo.todoName.indexOf(searchTodoName.trim()) != -1)
+    const searchedTodo = copyTodos.filter(copyTodo => {
+      return copyTodo.todoName.toLowerCase().includes(searchTodoName.toLowerCase().trim())
+    })
 
     setFilteredTodos(currentFilteredTodos => {
       return [
